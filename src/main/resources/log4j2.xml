@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- INCLUDE -DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector in JVM options-->
+<Configuration status="WARN" monitorInterval="30" shutdownHook="disable">
+    <Properties>
+        <property name="MICRO_SERVICE_HOME">.</property>
+        <property name="logging.path">${sys:MICRO_SERVICE_HOME}/logs</property>
+        <Property name="EXCEPTION_PATTERN">%highlight{[%-5level]} %style{[%date{ISO8601}] [%X{tid}] [%class{1}->%method:%line]}{Magenta} [Exception %msg - Thread Id %thread - Start]%n%xException{8}%n[Exception %msg - End]%n</Property>
+        <Property name="DEFAULT_PATTERN">%highlight{[%-5level]} %style{[%date{ISO8601}] [%X{camel.breadcrumbId}] [%class{1}->%method:%line]}{Magenta} | %msg%n </Property>
+        <Property name="ROLLING_PATTERN">%d{yyyy-MM-dd}.%i.log.gz</Property>
+        <Property name="DEFAULT_MAX_FILE_SIZE">20 MB</Property>
+        <Property name="DEFAULT_MAX_FILE_LIVING_TIME_INTERVAL">1</Property>
+        <!-- DEFAULT SENTRY DSN: no operation -->
+        <Property name="sentry.dsn">noop://user:password@localhost:0/0</Property>
+    </Properties>
+
+    <Appenders>
+        <Raven name="SENTRY">
+            <dsn>${sys:sentry.dsn}?raven.async.queuesize=200</dsn>
+            <release>${project.version}</release>
+            <serverName>${hostName}</serverName>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Raven>
+
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${DEFAULT_PATTERN}"/>
+        </Console>
+
+        <File name="STDOUT"
+              fileName="${logging.path}/stdout.log">
+            <PatternLayout>
+                <Pattern>${DEFAULT_PATTERN}</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="SENTRY"/>
+        </Root>
+
+        <Logger name="xyz.fabiano.localstack" level="INFO" />
+
+        <Logger name="com.getsentry.raven" level="WARN" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>

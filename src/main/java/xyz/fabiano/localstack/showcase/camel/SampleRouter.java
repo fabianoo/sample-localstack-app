@@ -17,20 +17,17 @@ import static org.apache.camel.LoggingLevel.INFO;
 @Component
 public class SampleRouter extends RouteBuilder {
 
-    private final String region;
     private final String inputQueue;
     private final String outputQueue;
     private Integer concurrentConsumers;
     private AmazonSQS amazonSQS;
 
     public SampleRouter(
-        @Value("${showcase.aws.region}") String region,
         @Value("${showcase.sqs.inputQueue}") String inputQueue,
         @Value("${showcase.sqs.outputQueue}") String outputQueue,
         @Value("${showcase.sqs.concurrentConsumers}") Integer concurrentConsumers,
         AmazonSQS amazonSQS) {
 
-        this.region = region;
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
         this.concurrentConsumers = concurrentConsumers;
@@ -67,7 +64,6 @@ public class SampleRouter extends RouteBuilder {
 
         config.setAmazonSQSClient(amazonSQS);
         config.setQueueName(queueName);
-        config.setRegion(region);
         config.setConcurrentConsumers(concurrentConsumers);
         config.setDeleteAfterRead(true);
         config.setDeleteIfFiltered(true);

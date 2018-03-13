@@ -21,7 +21,7 @@ public class AwsSqsConfiguration {
 
     @Bean
     @Profile({"local"})
-    public AmazonSQS localstackSQS(@Value("${showcase.aws.region}") String region) {
+    public static AmazonSQS localstackSQS(@Value("${showcase.aws.region}") String region) {
         return AmazonSQSClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(
                 new BasicAWSCredentials("test", "test")))
