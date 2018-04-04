@@ -9,8 +9,10 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import xyz.fabiano.spring.localstack.help.DockerClientsHolder;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RunWith(LocalstackDockerTestRunner.class)
 @LocalstackDockerProperties(environmentVariableProvider = SampleRouterTest.OnlySQSEnvProvider.class, randomizePorts = true)
+@Ignore
 public class SampleRouterTest extends CamelTestSupport {
 
     private static final String INPUT_QUEUE = "input-queue-test";
@@ -30,7 +33,7 @@ public class SampleRouterTest extends CamelTestSupport {
 
     @Override
     public RoutesBuilder createRouteBuilder() {
-        return new SampleRouter(INPUT_QUEUE, OUTPUT_QUEUE, 1, amazonSQS);
+        return new SampleRouter(INPUT_QUEUE, OUTPUT_QUEUE, 1, DockerClientsHolder.amazonSQSAsync());
     }
 
     @Test
