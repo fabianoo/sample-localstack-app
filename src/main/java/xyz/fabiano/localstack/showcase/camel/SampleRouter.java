@@ -1,5 +1,6 @@
 package xyz.fabiano.localstack.showcase.camel;
 
+import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Endpoint;
@@ -20,18 +21,18 @@ public class SampleRouter extends RouteBuilder {
     private final String inputQueue;
     private final String outputQueue;
     private Integer concurrentConsumers;
-    private AmazonSQSAsync amazonSQSAsync;
+    private AmazonSQS amazonSQS;
 
     public SampleRouter(
         @Value("${showcase.sqs.inputQueue}") String inputQueue,
         @Value("${showcase.sqs.outputQueue}") String outputQueue,
         @Value("${showcase.sqs.concurrentConsumers}") Integer concurrentConsumers,
-        AmazonSQSAsync amazonSQSAsync) {
+        AmazonSQS amazonSQS) {
 
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
         this.concurrentConsumers = concurrentConsumers;
-        this.amazonSQSAsync = amazonSQSAsync;
+        this.amazonSQS = amazonSQS;
     }
 
     @Override
@@ -62,7 +63,7 @@ public class SampleRouter extends RouteBuilder {
     private Endpoint sqs(String queueName) {
         SqsConfiguration config = new SqsConfiguration();
 
-        config.setAmazonSQSClient(amazonSQSAsync);
+        config.setAmazonSQSClient(amazonSQS);
         config.setQueueName(queueName);
         config.setConcurrentConsumers(concurrentConsumers);
         config.setDeleteAfterRead(true);

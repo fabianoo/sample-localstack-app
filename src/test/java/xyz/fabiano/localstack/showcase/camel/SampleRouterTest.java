@@ -1,18 +1,16 @@
 package xyz.fabiano.localstack.showcase.camel;
 
-import cloud.localstack.DockerTestUtils;
-import cloud.localstack.docker.LocalstackDockerTestRunner;
 import cloud.localstack.docker.annotation.IEnvironmentVariableProvider;
-import cloud.localstack.docker.annotation.LocalstackDockerProperties;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import xyz.fabiano.spring.localstack.help.DockerClientsHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import xyz.fabiano.spring.localstack.annotation.SpringLocalstackProperties;
+import xyz.fabiano.spring.localstack.junit.SpringLocalstackDockerRunner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,19 +19,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RunWith(LocalstackDockerTestRunner.class)
-@LocalstackDockerProperties(environmentVariableProvider = SampleRouterTest.OnlySQSEnvProvider.class, randomizePorts = true)
-@Ignore
+import static xyz.fabiano.spring.localstack.LocalstackService.SQS;
+
+@RunWith(SpringLocalstackDockerRunner.class)
+@SpringLocalstackProperties(services = { SQS })
 public class SampleRouterTest extends CamelTestSupport {
 
     private static final String INPUT_QUEUE = "input-queue-test";
     private static final String OUTPUT_QUEUE = "output-queue-test";
 
-    private AmazonSQS amazonSQS = DockerTestUtils.getClientSQS();
+    @Autowired
+    private AmazonSQS amazonSQS;
 
     @Override
     public RoutesBuilder createRouteBuilder() {
-        return new SampleRouter(INPUT_QUEUE, OUTPUT_QUEUE, 1, DockerClientsHolder.amazonSQSAsync());
+        return new SampleRouter(INPUT_QUEUE, OUTPUT_QUEUE, 1, amazonSQS);
     }
 
     @Test
