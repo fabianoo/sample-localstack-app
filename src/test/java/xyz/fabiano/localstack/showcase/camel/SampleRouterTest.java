@@ -6,11 +6,12 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import xyz.fabiano.spring.localstack.annotation.SpringLocalstackProperties;
-import xyz.fabiano.spring.localstack.junit.SpringLocalstackDockerRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,10 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static xyz.fabiano.spring.localstack.LocalstackService.SQS;
-
-@RunWith(SpringLocalstackDockerRunner.class)
-@SpringLocalstackProperties(services = { SQS })
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class SampleRouterTest extends CamelTestSupport {
 
     private static final String INPUT_QUEUE = "input-queue-test";
@@ -30,6 +29,12 @@ public class SampleRouterTest extends CamelTestSupport {
 
     @Autowired
     private AmazonSQS amazonSQS;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+
+    }
 
     @Override
     public RoutesBuilder createRouteBuilder() {
