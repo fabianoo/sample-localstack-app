@@ -144,7 +144,7 @@
         <dependency>
             <groupId>xyz.fabiano</groupId>
             <artifactId>spring-localstack</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
         </dependency>
 
         <!-- Test -->
