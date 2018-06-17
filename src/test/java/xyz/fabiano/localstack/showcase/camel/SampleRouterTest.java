@@ -1,6 +1,5 @@
 package xyz.fabiano.localstack.showcase.camel;
 
-import cloud.localstack.docker.annotation.IEnvironmentVariableProvider;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
@@ -10,35 +9,39 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SampleRouterTest extends CamelTestSupport {
 
-    private static final String INPUT_QUEUE = "input-queue-test";
-    private static final String OUTPUT_QUEUE = "output-queue-test";
+    @Value("${showcase.sqs.inputQueue}")
+    private String inputQueue;
+    @Value("${showcase.sqs.outputQueue}")
+    private String outputQueue;
 
     @Autowired
     private AmazonSQS amazonSQS;
+    private String inputQueueUrl;
+    private String outputQueueUrl;
 
     @Override
     @Before
     public void setUp() throws Exception {
-
+        inputQueueUrl = amazonSQS.createQueue(inputQueue).getQueueUrl();
+        outputQueueUrl = amazonSQS.createQueue(outputQueue).getQueueUrl();
     }
 
     @Override
     public RoutesBuilder createRouteBuilder() {
-        return new SampleRouter(INPUT_QUEUE, OUTPUT_QUEUE, 1, amazonSQS);
+        return new SampleRouter(inputQueueUrl, outputQueueUrl, 1, amazonSQS);
     }
 
     @Test
@@ -69,7 +72,7 @@ public class SampleRouterTest extends CamelTestSupport {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return amazonSQS.receiveMessage(amazonSQS.getQueueUrl(OUTPUT_QUEUE).getQueueUrl()).getMessages();
+        return amazonSQS.receiveMessage(outputQueueUrl).getMessages();
     }
 
     public void sendMessage(String messageFile) {
@@ -79,17 +82,7 @@ public class SampleRouterTest extends CamelTestSupport {
 
         SendMessageRequest request = new SendMessageRequest();
         request.setMessageBody(message);
-        request.setQueueUrl(amazonSQS.getQueueUrl(INPUT_QUEUE).getQueueUrl());
+        request.setQueueUrl(inputQueueUrl);
         amazonSQS.sendMessage(request);
     }
-
-    public static class OnlySQSEnvProvider implements IEnvironmentVariableProvider {
-        @Override
-        public Map<String, String> getEnvironmentVariables() {
-            HashMap<String, String> envVars = new HashMap<>();
-            envVars.put("SERVICES", "sqs");
-            return envVars;
-        }
-    }
-
 }
