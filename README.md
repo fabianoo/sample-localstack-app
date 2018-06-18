@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/fabianoo/localstack-showcase.svg?branch=master)](https://travis-ci.org/fabianoo/localstack-showcase)
+[![Build Status](https://travis-ci.org/fabianoo/localstack-showcase.svg?branch=master)](https://travis-ci.org/fabianoo/sample-localstack-publisher)
 
-# Simple Localstack Showcase
-A simple showcase of localstack with Spring and Camel
+# Simple Localstack Publisher Showcase
+A simple publisher showcase of localstack with Spring and Camel
 
 ## Topics
 - Localstack emulates the Amazon Web Services with local endpoints
