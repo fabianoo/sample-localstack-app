@@ -24,8 +24,8 @@ public class SampleRouter extends RouteBuilder {
     private AmazonSQS amazonSQS;
 
     public SampleRouter(
-        @Value("${showcase.sqs.inputQueue}") String inputQueue,
-        @Value("${showcase.sqs.outputQueue}") String outputQueue,
+        @Value("${showcase.sqs.input-queue}") String inputQueue,
+        @Value("${showcase.sqs.output-queue}") String outputQueue,
         @Value("${showcase.sqs.concurrentConsumers}") Integer concurrentConsumers,
         AmazonSQS amazonSQS) {
 

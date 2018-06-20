@@ -22,9 +22,10 @@ import java.util.stream.Collectors;
 @SpringBootTest
 public class SampleRouterTest extends CamelTestSupport {
 
-    @Value("${showcase.sqs.inputQueue}")
+    @Value("${showcase.sqs.input-queue}")
     private String inputQueue;
-    @Value("${showcase.sqs.outputQueue}")
+    
+    @Value("${showcase.sqs.output-queue}")
     private String outputQueue;
 
     @Autowired

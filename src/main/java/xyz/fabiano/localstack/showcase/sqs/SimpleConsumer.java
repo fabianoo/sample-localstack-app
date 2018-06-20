@@ -14,7 +14,7 @@ public class SimpleConsumer {
     @Autowired
     private AmazonSQS sqsClient;
 
-    @Value("${showcase.sqs.inputQueue2}")
+    @Value("${showcase.sqs.input-queue2}")
     private String inputQueue;
 
     @PostConstruct
