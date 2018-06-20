@@ -11,23 +11,19 @@ import org.springframework.stereotype.Service;
 public class IntegrationPublisher {
 
     @Autowired
-    private AmazonSQS sqsClient;
+    private AmazonSQS amazonSQS;
 
     @Value("${showcase.sqs.integration-queue}")
     private String integrationQueue;
 
     public void publishSimpleMessage(String message) {
-        sqsClient.sendMessage(integrationQueue, message);
+        amazonSQS.sendMessage(integrationQueue, message);
     }
 
-    @Bean
     @Profile("local")
-    public boolean local() {
-        try {
-            integrationQueue = sqsClient.createQueue(integrationQueue).getQueueUrl();
-        } catch (Throwable t) {
-            integrationQueue = sqsClient.getQueueUrl(integrationQueue).getQueueUrl();
-        }
+    @Bean
+    private boolean local() {
+        integrationQueue = amazonSQS.createQueue(integrationQueue).getQueueUrl();
         return true;
     }
 }
